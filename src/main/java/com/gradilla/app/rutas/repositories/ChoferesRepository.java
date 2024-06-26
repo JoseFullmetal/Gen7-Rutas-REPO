@@ -29,7 +29,12 @@ public class ChoferesRepository implements IRepository<Chofer> {
 
     @Override
     public Chofer getById(Long id) throws SQLException {
-        return null;
+        Chofer chofer =null;
+        try(PreparedStatement stmt =
+                conn.prepareStatement("SELECT * FROM choferes WHERE ID_CHOFER=?")){
+            stmt.setLong(1,id);
+            try(ResultSet rs = stmt)
+        }
     }
 //////////////////////////////////////////////////////////////////////
     @Override
