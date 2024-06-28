@@ -1,6 +1,7 @@
 package com.gradilla.app.rutas.services;
+import com.gradilla.app.rutas.models.Camion;
 import com.gradilla.app.rutas.models.Chofer;
-import com.gradilla.app.rutas.models.enums.Camion;
+
 import com.gradilla.app.rutas.repositories.CamionRepository;
 import com.gradilla.app.rutas.repositories.ChoferesRepository;
 import com.gradilla.app.rutas.repositories.IRepositoryCamion;
@@ -26,7 +27,13 @@ public class CamionService implements IServiceCamion<Camion> {
     }
 
     @Override
-    public Optional<Camion> getById(Long id) {return Optional.empty();
+    public Optional<Camion> getById(Long id) {
+        try {
+            return Optional.ofNullable(camionRepo.getById(id));
+        }catch (SQLException e) {
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+
     }
 
     ///////////////////////////////////////////////////////////////
@@ -42,6 +49,11 @@ public class CamionService implements IServiceCamion<Camion> {
 
     @Override
     public void eliminarCamion(Long id) {
+        try {
+            camionRepo.eliminarr(id);
+        }catch (SQLException e) {
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
 
     }
 

@@ -8,7 +8,7 @@ public class ChoferesRepository implements IRepository<Chofer> {
 
     private Connection conn;
 
-    public ChoferesRepository(Connection conn){
+    public ChoferesRepository(Connection conn) {
         this.conn = conn;
     }
 
@@ -16,32 +16,39 @@ public class ChoferesRepository implements IRepository<Chofer> {
     public List<Chofer> listar() throws SQLException {
         List<Chofer> choferes = new ArrayList<>();
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM CHOFERES")){
-            while (rs.next()){
+             ResultSet rs = stmt.executeQuery("SELECT * FROM CHOFERES")) {
+            while (rs.next()) {
                 Chofer a = this.getChofer(rs);
                 choferes.add(a);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return  choferes;
+        return choferes;
     }
-
+////////////////////////////////////////////////////////////////////
     @Override
     public Chofer getById(Long id) throws SQLException {
-        Chofer chofer =null;
-        try(PreparedStatement stmt =
-                conn.prepareStatement("SELECT * FROM choferes WHERE ID_CHOFER=?")){
-            stmt.setLong(1,id);
-            try(ResultSet rs = stmt)
+        Chofer chofer = null;
+        try (PreparedStatement stmt =
+                     conn.prepareStatement("SELECT * FROM choferes WHERE ID_CHOFER=?")) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    chofer = this.getChofer(rs);
+                }
+            }
+
         }
+        return chofer;
     }
+////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
     @Override
-    public void guardad(Chofer chofer) throws SQLException {
+    public void guardar(Chofer chofer) throws SQLException {
         String sql = "";
         if (chofer.getId() != null && chofer.getId() > 0) {
-            sql = "upodate choferes set nombre =?, ap_paterno=?, " +
+            sql = "update choferes set nombre =?, ap_paterno=?, " +
                     "ap_materno=?, licencia=?, telefono=?, " +
                     "FECHA_NACIEMIENTO=?, diponibilidad=? " +
                     " where id_chofer=?";
@@ -79,8 +86,14 @@ public class ChoferesRepository implements IRepository<Chofer> {
     @Override
     public void eliminar(long id) throws SQLException {
 
-    }
+        String sql = "delete from choferes where id_chofer=?";
 
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setLong(1,id);
+            stmt.executeUpdate();
+            }
+    }
+/////////////////////////////////////////////////
 
 
 

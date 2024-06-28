@@ -1,97 +1,119 @@
 package com.gradilla.app.rutas.repositories;
-import com.gradilla.app.rutas.models.enums.Camion;
+
+import com.gradilla.app.rutas.models.Camion;
+import com.gradilla.app.rutas.models.Chofer;
 import com.gradilla.app.rutas.models.enums.Marcas;
 import com.gradilla.app.rutas.models.enums.Tipos;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-public class CamionRepository implements IRepositoryCamion<Camion> {
 
+public class CamionRepository implements IRepositoryCamion<Camion> {
 
     private Connection conn;
 
-    public CamionRepository(Connection conn) {
+    public CamionRepository(Connection conn){
         this.conn = conn;
     }
 
 
     @Override
     public List<Camion> listar() throws SQLException {
-        List<Camion> camions = new ArrayList<>();
+        List<Camion> camiones = new ArrayList<>();
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM CAMIONES")) {
-            while (rs.next()) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM CAMIONES")){
+            while (rs.next()){
                 Camion a = this.getCamion(rs);
-                camions.add(a);
+                camiones.add(a);
             }
-        } catch (SQLException e) {
+        }catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return camions;
+        return  camiones;
     }
+
 
     @Override
     public Camion getById(Long id) throws SQLException {
-        return null;
+        Camion camion = null;
+
+        try(PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CAMIONES WHERE ID_CAMION = ?")){
+            stmt.setLong(1, id);
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()){
+                    camion = this.getCamion(rs);
+                }
+            }
+        }
+
+        return camion;
     }
 
     @Override
     public void guardad(Camion camion) throws SQLException {
-        String sql = "";
-        if (camion.getId() != null && camion.getId() > 0) {
-            sql = "upodate camiones set MATRICULA=?, TIPO_CAMION=?," +
-                    "MODELO=?, MARCA=?, CAPACIDAD=?, " +
-                    "KILOMETRAJE=?, DISPONIBILIDAD=? " +
-                    " where ID_CAMION=?";
-        } else {
-            sql = "insert into camiones(ID_CAMION, MATRICULA," +
-                    "TIPO_CAMION, MODELO, MARCA, CAPACIDAD," +
-                    "KILOMETRAJE, DISPONIBILIDAD) " +
-                    "values (-1,?,?,?,?,?,?,?)";
+        String sql ="";
+        if (camion.getId() != null && camion.getId() >0) {
+            sql = "update camiones set matricula =?, tipo_camion=?, " +
+                    "modelo=?, marca=?, capacidad=?, " +
+                    "kilometraje=?, disponibilidad=? " +
+                    " where id_camion=?";
+        }else{
+            sql = "insert into camiones(id_camion, matricula, "+
+                    "tipo_camion, modelo, marca, capacidad, "+
+                    "kilometraje, disponibilidad) "+
+                    "values (SEQUECE2.NEXTVAL,?,?,?,?,?,?,?)";
         }
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            if (camion.getId() != null && camion.getId() > 0) {
-                stmt.setString(1, camion.getmatricula());
-                stmt.setString(2, camion.gettipo_camion().name());
-                stmt.setString(3, String.valueOf(camion.getModelo()));
-                stmt.setString(4, camion.getMarca().name());
-                stmt.setString(5, String.valueOf(camion.getCapasidad()));
-                stmt.setString(6, String.valueOf(camion.getKilometraje()));
-                stmt.setInt(   7, camion.getDisponibilidad() ? 1 : 0);
-                stmt.setLong(  8, camion.getId());
-            } else {
-                stmt.setString(1, camion.getmatricula());
-                stmt.setString(2, String.valueOf(camion.gettipo_camion()));
-                stmt.setString(3, String.valueOf(camion.getModelo()));
-                stmt.setString(4, String.valueOf(camion.getMarca()));
-                stmt.setString(5, String.valueOf(camion.getCapasidad()));
-                stmt.setString(6, String.valueOf(camion.getKilometraje()));
-                //Operador ternario
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            if (camion.getId() != null && camion.getId() >0){
+                stmt.setString(1, camion.getMatricula());
+                stmt.setString(2, camion.getTipoCamion().toString().toUpperCase());
+                stmt.setInt(3, camion.getModelo());
+                stmt.setString(4,camion.getMarca().toString().toUpperCase());
+                stmt.setInt(5,camion.getCapacidad());
+                stmt.setFloat(6,camion.getKilometraje().floatValue());
+                stmt.setInt(7, camion.getDisponibilidad() ? 1 : 0);
+                stmt.setLong(8, camion.getId());
+
+            }else{
+                stmt.setString(1, camion.getMatricula());
+                stmt.setString(2, camion.getTipoCamion().toString().toUpperCase());
+                stmt.setInt(3, camion.getModelo());
+                stmt.setString(4,camion.getMarca().toString().toUpperCase());
+                stmt.setInt(5,camion.getCapacidad());
+                stmt.setFloat(6,camion.getKilometraje().floatValue());
                 stmt.setInt(7, camion.getDisponibilidad() ? 1 : 0);
             }
             stmt.executeUpdate();
         }
     }
 
-        @Override
-        public void eliminar(long id) throws SQLException {
 
+
+    @Override
+    public void eliminarr(long id) throws SQLException {
+        String sql = "delete from camiones where ID_CAMION =?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setLong(1,id);
+            stmt.executeUpdate();
         }
+    }
+
     private Camion getCamion(ResultSet rs) throws SQLException {
         Camion a = new Camion();
         a.setId(rs.getLong("ID_CAMION"));
-        a.setmatricula(rs.getString("MATRICULA"));
-        a.settipo_camion(Tipos.valueOf(rs.getString("TIPO_CAMION")));
-        a.setModelo(Integer.valueOf(rs.getString("MODELO")));
-        a.setMarca(Marcas.valueOf(rs.getString("MARCA")));
-        a.setCapasidad(Integer.valueOf(rs.getString("CAPACIDAD")));
-        a.setKilometraje(Double.valueOf(rs.getString("KILOMETRAJE")));
-        a.setDisponibilidad(rs.getBoolean("DIPONIBILIDAD"));
+        a.setMatricula(rs.getString("MATRICULA"));
+        String tipoCamionString = rs.getString("TIPO_CAMION");
+        Tipos tipoCamion = Tipos.deValor(tipoCamionString);
+        a.setTipoCamion(tipoCamion);
+        a.setModelo(rs.getInt("MODELO"));
+        String tipoMarcaString = rs.getString("MARCA");
+        Marcas marca = Marcas.deValor(tipoMarcaString);
+        a.setTipoCamion(tipoCamion);
+        a.setMarca(marca);
+        a.setCapacidad(rs.getInt("CAPACIDAD"));
+        a.setKilometraje(rs.getDouble("KILOMETRAJE"));
+        a.setDisponibilidad(rs.getBoolean("DISPONIBILIDAD"));
         return a;
-        }
-
     }
-
-
-
+}

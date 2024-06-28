@@ -22,6 +22,7 @@ public class ListaChoferesServlet extends HttpServlet {
 
         IService<Chofer> service = new ChoferesService(conn);
         List<Chofer> choferes= service.listar();
+
         /*for (Chofer c: chofers){
             resp.getWriter().println("<1>"+ c.getId()+ "->"
             +c.getNombre()+ "->"+c.getApMaterno()+"</h1>");

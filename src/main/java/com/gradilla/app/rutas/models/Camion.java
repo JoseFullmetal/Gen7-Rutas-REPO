@@ -1,7 +1,9 @@
-package com.gradilla.app.rutas.models.enums;
+package com.gradilla.app.rutas.models;
+
+import com.gradilla.app.rutas.models.enums.Marcas;
+import com.gradilla.app.rutas.models.enums.Tipos;
 
 public class Camion {
-
 
     private Long id;
 
@@ -28,19 +30,19 @@ public class Camion {
         this.id = id;
     }
 
-    public String getmatricula() {
+    public String getMatricula() {
         return matricula;
     }
 
-    public void setmatricula(String matricula) {
+    public void setMatricula(String matricula) {
         this.matricula = matricula;
     }
 
-    public Tipos gettipo_camion() {
+    public Tipos getTipoCamion() {
         return tipoCamion;
     }
 
-    public void settipo_camion(Tipos tipoCamion) {
+    public void setTipoCamion(Tipos tipoCamion) {
         this.tipoCamion = tipoCamion;
     }
 
@@ -60,12 +62,12 @@ public class Camion {
         this.marca = marca;
     }
 
-    public Integer getCapasidad() {
+    public Integer getCapacidad() {
         return capacidad;
     }
 
-    public void setCapasidad(Integer capasidad) {
-        this.capacidad = capasidad;
+    public void setCapacidad(Integer capacidad) {
+        this.capacidad = capacidad;
     }
 
     public Double getKilometraje() {
@@ -83,6 +85,4 @@ public class Camion {
     public void setDisponibilidad(Boolean disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
-
-
 }

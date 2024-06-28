@@ -26,10 +26,14 @@ public class ChoferesService implements IService<Chofer>{
             throw new RuntimeException(e.getMessage(), e.getCause());
         }
     }
-//////////////////////////////////////////////////falta
+/////////////////////////////////////////////////
     @Override
     public Optional<Chofer> getById(Long id) {
-        return Optional.empty();
+        try {
+            return Optional.ofNullable(choferesRepo.getById(id));
+        }catch (SQLException e) {
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
     }
 
     //////////////////////////////////////////////////
@@ -40,7 +44,7 @@ public class ChoferesService implements IService<Chofer>{
     @Override
     public void guardar(Chofer chofer) {
         try {
-            choferesRepo.guardad(chofer);
+            choferesRepo.guardar(chofer);
         }catch (SQLException e) {
             throw new RuntimeException(e.getMessage(), e.getCause());
         }
@@ -49,6 +53,13 @@ public class ChoferesService implements IService<Chofer>{
 
     @Override
     public void eliminar(Long id) {
+
+        try {
+            choferesRepo.eliminar(id);
+        }catch (SQLException e) {
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
+
 
     }
 }

@@ -10,7 +10,8 @@ public interface IRepositoryCamion<S> {
     S getById(Long id) throws SQLException;
 
     void guardad (S t) throws SQLException;
-    void eliminar (long id) throws SQLException;
+
+    void eliminarr(long id) throws SQLException;
 
 
 

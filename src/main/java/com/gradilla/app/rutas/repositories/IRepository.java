@@ -9,7 +9,8 @@ public interface IRepository<T> {
 
     T getById(Long id) throws SQLException;
 
-    void guardad (T t) throws SQLException;
+    void guardar (T t) throws SQLException;
+
     void eliminar (long id) throws SQLException;
 
 
